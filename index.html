@@ -140,6 +140,7 @@
     input[type="date"],
     input[type="time"],
     input[type="text"],
+    select,
     textarea {
       width: 100%;
       max-width: 100%;
@@ -156,7 +157,8 @@
     }
 
     input[type="date"],
-    input[type="time"] {
+    input[type="time"],
+    select {
       -webkit-appearance: none;
       appearance: none;
       min-height: 52px;
@@ -164,6 +166,14 @@
       padding: 12px 14px;
       text-align: left;
       line-height: normal;
+    }
+
+    select {
+      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position: calc(100% - 18px) 22px, calc(100% - 12px) 22px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 38px;
     }
 
     input[type="text"] {
@@ -325,10 +335,10 @@
 
     .day-count {
       flex: 0 0 auto;
-      color: var(--primary-dark);
-      font-size: 22px;
-      font-weight: 900;
-      line-height: 1.1;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.2;
       white-space: nowrap;
     }
 
@@ -371,7 +381,7 @@
       line-height: 1.45;
     }
 
-    .record-med,
+    .record-dose-med,
     .record-note {
       margin-top: 4px;
       color: var(--muted);
@@ -462,8 +472,25 @@
         </div>
 
         <div class="field">
-          <label for="medicineInput">薬名・量など（任意）</label>
-          <input id="medicineInput" name="medicine" type="text" placeholder="例：ロラゼパム0.5mg、半錠など" autocomplete="off">
+          <label for="dosageCountSelect">何錠か（任意）</label>
+          <select id="dosageCountSelect" name="dosageCount">
+            <option value="">未選択</option>
+            <option value="0.5錠">0.5錠</option>
+            <option value="1錠">1錠</option>
+            <option value="1.5錠">1.5錠</option>
+            <option value="2錠">2錠</option>
+            <option value="2.5錠">2.5錠</option>
+            <option value="3錠">3錠</option>
+            <option value="3.5錠">3.5錠</option>
+            <option value="4錠">4錠</option>
+            <option value="4.5錠">4.5錠</option>
+            <option value="5錠">5錠</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="medicineInput">薬名（任意）</label>
+          <input id="medicineInput" name="medicine" type="text" placeholder="例：ロラゼパム、デパスなど" autocomplete="off">
         </div>
 
         <div class="field">
@@ -534,6 +561,7 @@
 
     const dateInput = document.getElementById("dateInput");
     const timeInput = document.getElementById("timeInput");
+    const dosageCountSelect = document.getElementById("dosageCountSelect");
     const medicineInput = document.getElementById("medicineInput");
     const memoInput = document.getElementById("memoInput");
     const recordForm = document.getElementById("recordForm");
@@ -574,6 +602,7 @@
         id: typeof record.id === "string" && record.id ? record.id : createId(),
         date: typeof record.date === "string" ? record.date : "",
         time: typeof record.time === "string" ? record.time : "",
+        dosageCount: typeof record.dosageCount === "string" ? record.dosageCount : "",
         medicine: typeof record.medicine === "string" ? record.medicine : "",
         situations: Array.isArray(record.situations) ? record.situations.filter(Boolean) : [],
         feelings: Array.isArray(record.feelings) ? record.feelings.filter(Boolean) : [],
@@ -653,6 +682,7 @@
       editingId = null;
       dateInput.value = todayString();
       timeInput.value = currentTimeString();
+      dosageCountSelect.value = "";
       medicineInput.value = "";
       memoInput.value = "";
       setSelectedChips("situations", []);
@@ -726,7 +756,7 @@
         head.className = "day-head";
         head.innerHTML = `
           <div class="day-date">${formatDate(date)}</div>
-          <div class="day-count">頓服 ${grouped[date].length}回</div>
+          <div class="day-count">記録 ${grouped[date].length}件</div>
         `;
         card.appendChild(head);
 
@@ -752,11 +782,18 @@
           summary.textContent = recordSummary(record);
           detail.appendChild(summary);
 
+          const doseMedParts = [];
+          if (record.dosageCount.trim()) {
+            doseMedParts.push(record.dosageCount.trim());
+          }
           if (record.medicine.trim()) {
-            const medicine = document.createElement("div");
-            medicine.className = "record-med";
-            medicine.textContent = record.medicine.trim();
-            detail.appendChild(medicine);
+            doseMedParts.push(record.medicine.trim());
+          }
+          if (doseMedParts.length) {
+            const doseMed = document.createElement("div");
+            doseMed.className = "record-dose-med";
+            doseMed.textContent = doseMedParts.join("　");
+            detail.appendChild(doseMed);
           }
 
           if (record.memo.trim()) {
@@ -808,6 +845,7 @@
       editingId = id;
       dateInput.value = record.date;
       timeInput.value = record.time;
+      dosageCountSelect.value = record.dosageCount || "";
       medicineInput.value = record.medicine;
       memoInput.value = record.memo;
       setSelectedChips("situations", record.situations);
@@ -844,6 +882,7 @@
         id: editingId || createId(),
         date,
         time,
+        dosageCount: dosageCountSelect.value,
         medicine: medicineInput.value.trim(),
         situations: getSelectedChips("situations"),
         feelings: getSelectedChips("feelings"),
