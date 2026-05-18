@@ -266,36 +266,6 @@
       font-weight: 700;
     }
 
-    .counts {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      width: 100%;
-    }
-
-    .count-box {
-      min-width: 0;
-      padding: 13px 10px;
-      border-radius: 16px;
-      background: var(--surface-soft);
-      text-align: center;
-    }
-
-    .count-label {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .count-value {
-      display: block;
-      margin-top: 4px;
-      font-size: 24px;
-      font-weight: 900;
-      line-height: 1.1;
-    }
-
     .backup-card {
       background: #fbfffd;
     }
@@ -343,7 +313,7 @@
       justify-content: space-between;
       gap: 12px;
       padding: 16px 18px;
-      background: linear-gradient(135deg, #fff0e9, #f2fbf8);
+      background: #fffdfb;
       border-bottom: 1px solid var(--line);
     }
 
@@ -449,10 +419,6 @@
         grid-template-columns: minmax(0, 1fr);
       }
 
-      .counts {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
       .actions .button,
       .file-label {
         width: 100%;
@@ -473,9 +439,7 @@
     <section class="hero" aria-labelledby="app-title">
       <h1 id="app-title">頓服カウントメモ</h1>
       <p class="lead">
-        頓服を飲んだ時間や、そのときの状況・気持ちを記録するメモです。<br>
-        受診時に「どんな時に必要になったか」を振り返るために使えます。<br>
-        飲んだ回数を責めるものではありません。
+        頓服を飲んだ時間や、そのときの状況・気持ちを記録するメモです。
       </p>
     </section>
 
@@ -498,7 +462,7 @@
         </div>
 
         <div class="field">
-          <label for="medicineInput">薬名・量など</label>
+          <label for="medicineInput">薬名・量など（任意）</label>
           <input id="medicineInput" name="medicine" type="text" placeholder="例：ロラゼパム0.5mg、半錠など" autocomplete="off">
         </div>
 
@@ -523,24 +487,6 @@
         </div>
         <p class="message" id="message" role="status" aria-live="polite"></p>
       </form>
-    </section>
-
-    <section class="card" aria-labelledby="count-title">
-      <h2 id="count-title">頓服が必要になった回数</h2>
-      <div class="counts">
-        <div class="count-box">
-          <span class="count-label">今日</span>
-          <span class="count-value" id="todayCount">0回</span>
-        </div>
-        <div class="count-box">
-          <span class="count-label">7日間</span>
-          <span class="count-value" id="sevenCount">0回</span>
-        </div>
-        <div class="count-box">
-          <span class="count-label">30日間</span>
-          <span class="count-value" id="thirtyCount">0回</span>
-        </div>
-      </div>
     </section>
 
     <section class="card backup-card" aria-labelledby="backup-title">
@@ -595,9 +541,6 @@
     const cancelEditButton = document.getElementById("cancelEditButton");
     const message = document.getElementById("message");
     const recordsContainer = document.getElementById("recordsContainer");
-    const todayCount = document.getElementById("todayCount");
-    const sevenCount = document.getElementById("sevenCount");
-    const thirtyCount = document.getElementById("thirtyCount");
     const exportButton = document.getElementById("exportButton");
     const importInput = document.getElementById("importInput");
 
@@ -758,35 +701,6 @@
       }, {});
     }
 
-    function dateToLocalMidnight(dateText) {
-      const parts = dateText.split("-").map(Number);
-      if (parts.length !== 3 || parts.some(Number.isNaN)) {
-        return null;
-      }
-      return new Date(parts[0], parts[1] - 1, parts[2]);
-    }
-
-    function daysAgoStart(days) {
-      const base = dateToLocalMidnight(todayString());
-      base.setDate(base.getDate() - (days - 1));
-      return base;
-    }
-
-    function countSince(days) {
-      const start = daysAgoStart(days);
-      return appData.records.filter((record) => {
-        const recordDate = dateToLocalMidnight(record.date);
-        return recordDate && recordDate >= start;
-      }).length;
-    }
-
-    function updateCounts() {
-      const today = todayString();
-      todayCount.textContent = `${appData.records.filter((record) => record.date === today).length}回`;
-      sevenCount.textContent = `${countSince(7)}回`;
-      thirtyCount.textContent = `${countSince(30)}回`;
-    }
-
     function recordSummary(record) {
       const merged = [...record.situations, ...record.feelings];
       return merged.length ? merged.join("／") : "記録のみ";
@@ -883,7 +797,6 @@
     }
 
     function render() {
-      updateCounts();
       renderRecords();
     }
 
