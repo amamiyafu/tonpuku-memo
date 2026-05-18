@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5a89a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="頓服メモ">
+  <link rel="manifest" href="./manifest.json">
+  <title>頓服カウントメモ</title>
+  <style>
+    :root {
+      --bg: #fff7f2;
+      --surface: #ffffff;
+      --surface-soft: #fff0e9;
+      --text: #342b28;
+      --muted: #756762;
+      --line: #ead9d2;
+      --primary: #d96755;
+      --primary-dark: #b94b3b;
+      --primary-soft: #ffe0d7;
+      --accent: #4b938c;
+      --accent-soft: #ddf2ee;
+      --danger: #b94b55;
+      --shadow: 0 14px 36px rgba(99, 61, 47, 0.1);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+      line-height: 1.65;
+    }
+
+    body {
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 720px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 20px 16px 36px;
+    }
+
+    .hero {
+      padding: 8px 2px 18px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: clamp(28px, 8vw, 42px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 0 16px;
+      padding: 18px;
+      border: 1px solid rgba(234, 217, 210, 0.9);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin-bottom: 12px;
+      font-size: 19px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 16px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field label,
+    .fieldset-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .input-wrap {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    input[type="date"],
+    input[type="time"],
+    input[type="text"],
+    textarea {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fffdfb;
+      color: var(--text);
+      box-sizing: border-box;
+      display: block;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    input[type="date"],
+    input[type="time"] {
+      -webkit-appearance: none;
+      appearance: none;
+      min-height: 52px;
+      height: 52px;
+      padding: 12px 14px;
+      text-align: left;
+      line-height: normal;
+    }
+
+    input[type="text"] {
+      min-height: 52px;
+      padding: 12px 14px;
+    }
+
+    textarea {
+      min-height: 112px;
+      padding: 12px 14px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(217, 103, 85, 0.16);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .chip {
+      min-height: 40px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fffdfb;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .chip[aria-pressed="true"] {
+      border-color: rgba(75, 147, 140, 0.35);
+      background: var(--accent-soft);
+      color: #265f59;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      max-width: 100%;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 800;
+      line-height: 1.2;
+      box-shadow: 0 10px 22px rgba(217, 103, 85, 0.22);
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button.secondary {
+      border: 1px solid var(--line);
+      background: #fffdfb;
+      color: var(--primary-dark);
+      box-shadow: none;
+    }
+
+    .button.danger {
+      background: #fff6f5;
+      color: var(--danger);
+      box-shadow: none;
+      border: 1px solid #f1cfd2;
+    }
+
+    .message {
+      min-height: 24px;
+      margin: 10px 0 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .counts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .count-box {
+      min-width: 0;
+      padding: 13px 10px;
+      border-radius: 16px;
+      background: var(--surface-soft);
+      text-align: center;
+    }
+
+    .count-label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .count-value {
+      display: block;
+      margin-top: 4px;
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .backup-card {
+      background: #fbfffd;
+    }
+
+    .backup-card p {
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .file-label {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-label input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 22px 2px 12px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .record-day {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .day-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, #fff0e9, #f2fbf8);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .day-date {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .day-count {
+      flex: 0 0 auto;
+      color: var(--primary-dark);
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .record-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .record-item {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .record-item:last-child {
+      border-bottom: 0;
+    }
+
+    .record-main {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .record-time {
+      color: var(--text);
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    .record-detail {
+      min-width: 0;
+    }
+
+    .record-summary {
+      overflow-wrap: anywhere;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .record-med,
+    .record-note {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .record-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      padding-left: 68px;
+    }
+
+    .small-button {
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fffdfb;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .empty {
+      margin: 0;
+      padding: 22px 4px 28px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 440px) {
+      .app {
+        padding: 18px 12px 30px;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 18px;
+      }
+
+      .two-col {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .counts {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .actions .button,
+      .file-label {
+        width: 100%;
+      }
+
+      .record-main {
+        grid-template-columns: 52px minmax(0, 1fr);
+      }
+
+      .record-actions {
+        padding-left: 62px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="hero" aria-labelledby="app-title">
+      <h1 id="app-title">頓服カウントメモ</h1>
+      <p class="lead">
+        頓服を飲んだ時間や、そのときの状況・気持ちを記録するメモです。<br>
+        受診時に「どんな時に必要になったか」を振り返るために使えます。<br>
+        飲んだ回数を責めるものではありません。
+      </p>
+    </section>
+
+    <section class="card" aria-labelledby="form-title">
+      <h2 id="form-title">記録する</h2>
+      <form id="recordForm" class="form-grid">
+        <div class="two-col">
+          <div class="field">
+            <label for="dateInput">日付</label>
+            <div class="input-wrap">
+              <input id="dateInput" name="date" type="date" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="timeInput">飲んだ時間</label>
+            <div class="input-wrap">
+              <input id="timeInput" name="time" type="time" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="medicineInput">薬名・量など</label>
+          <input id="medicineInput" name="medicine" type="text" placeholder="例：ロラゼパム0.5mg、半錠など" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <span class="fieldset-label">どんなとき？</span>
+          <div class="chip-group" id="situationChips" aria-label="どんなとき"></div>
+        </div>
+
+        <div class="field">
+          <span class="fieldset-label">そのときの気持ち</span>
+          <div class="chip-group" id="feelingChips" aria-label="そのときの気持ち"></div>
+        </div>
+
+        <div class="field">
+          <label for="memoInput">メモ</label>
+          <textarea id="memoInput" name="memo" placeholder="その時の状況、きっかけ、効き方など"></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="button" id="saveButton" type="submit">記録する</button>
+          <button class="button secondary" id="cancelEditButton" type="button" hidden>編集をやめる</button>
+        </div>
+        <p class="message" id="message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="count-title">
+      <h2 id="count-title">頓服が必要になった回数</h2>
+      <div class="counts">
+        <div class="count-box">
+          <span class="count-label">今日</span>
+          <span class="count-value" id="todayCount">0回</span>
+        </div>
+        <div class="count-box">
+          <span class="count-label">7日間</span>
+          <span class="count-value" id="sevenCount">0回</span>
+        </div>
+        <div class="count-box">
+          <span class="count-label">30日間</span>
+          <span class="count-value" id="thirtyCount">0回</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card backup-card" aria-labelledby="backup-title">
+      <h2 id="backup-title">バックアップ</h2>
+      <p>大切な記録がなくならないように、定期的なバックアップをお願いします。</p>
+      <div class="actions">
+        <button class="button secondary" id="exportButton" type="button">バックアップを書き出す</button>
+        <label class="button secondary file-label">
+          バックアップを読み込む
+          <input id="importInput" type="file" accept="application/json,.json">
+        </label>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <h2>記録一覧</h2>
+    </div>
+    <section id="recordsContainer" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "prnDoseCountMemo_v1";
+    const SITUATIONS = [
+      "不安が強い",
+      "眠れない",
+      "動悸",
+      "涙が止まらない",
+      "外出前",
+      "人と話した後",
+      "仕事・職場のこと",
+      "家族のこと",
+      "その他"
+    ];
+    const FEELINGS = [
+      "こわい",
+      "つらい",
+      "苦しい",
+      "イライラ",
+      "悲しい",
+      "落ち着かない",
+      "頭が止まらない",
+      "消えたい",
+      "その他"
+    ];
+
+    const dateInput = document.getElementById("dateInput");
+    const timeInput = document.getElementById("timeInput");
+    const medicineInput = document.getElementById("medicineInput");
+    const memoInput = document.getElementById("memoInput");
+    const recordForm = document.getElementById("recordForm");
+    const saveButton = document.getElementById("saveButton");
+    const cancelEditButton = document.getElementById("cancelEditButton");
+    const message = document.getElementById("message");
+    const recordsContainer = document.getElementById("recordsContainer");
+    const todayCount = document.getElementById("todayCount");
+    const sevenCount = document.getElementById("sevenCount");
+    const thirtyCount = document.getElementById("thirtyCount");
+    const exportButton = document.getElementById("exportButton");
+    const importInput = document.getElementById("importInput");
+
+    let appData = loadData();
+    let editingId = null;
+    let messageTimer = null;
+
+    function padNumber(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function todayString() {
+      const now = new Date();
+      return `${now.getFullYear()}-${padNumber(now.getMonth() + 1)}-${padNumber(now.getDate())}`;
+    }
+
+    function currentTimeString() {
+      const now = new Date();
+      return `${padNumber(now.getHours())}:${padNumber(now.getMinutes())}`;
+    }
+
+    function createId() {
+      if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return window.crypto.randomUUID();
+      }
+      return `record-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+
+    function normalizeRecord(record) {
+      return {
+        id: typeof record.id === "string" && record.id ? record.id : createId(),
+        date: typeof record.date === "string" ? record.date : "",
+        time: typeof record.time === "string" ? record.time : "",
+        medicine: typeof record.medicine === "string" ? record.medicine : "",
+        situations: Array.isArray(record.situations) ? record.situations.filter(Boolean) : [],
+        feelings: Array.isArray(record.feelings) ? record.feelings.filter(Boolean) : [],
+        memo: typeof record.memo === "string" ? record.memo : "",
+        createdAt: typeof record.createdAt === "string" ? record.createdAt : new Date().toISOString(),
+        updatedAt: typeof record.updatedAt === "string" ? record.updatedAt : ""
+      };
+    }
+
+    function normalizeData(raw) {
+      if (Array.isArray(raw)) {
+        return { version: 1, records: raw.map(normalizeRecord) };
+      }
+      if (raw && typeof raw === "object") {
+        return {
+          version: 1,
+          records: Array.isArray(raw.records) ? raw.records.map(normalizeRecord) : []
+        };
+      }
+      return { version: 1, records: [] };
+    }
+
+    function loadData() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) {
+          return { version: 1, records: [] };
+        }
+        return normalizeData(JSON.parse(saved));
+      } catch (error) {
+        console.warn("保存データを読み込めませんでした", error);
+        return { version: 1, records: [] };
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalizeData(appData)));
+    }
+
+    function makeChip(label, groupName) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "chip";
+      button.textContent = label;
+      button.dataset.value = label;
+      button.dataset.group = groupName;
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => {
+        const isPressed = button.getAttribute("aria-pressed") === "true";
+        button.setAttribute("aria-pressed", String(!isPressed));
+      });
+      return button;
+    }
+
+    function renderChipControls() {
+      const situationChips = document.getElementById("situationChips");
+      const feelingChips = document.getElementById("feelingChips");
+      situationChips.innerHTML = "";
+      feelingChips.innerHTML = "";
+      SITUATIONS.forEach((label) => situationChips.appendChild(makeChip(label, "situations")));
+      FEELINGS.forEach((label) => feelingChips.appendChild(makeChip(label, "feelings")));
+    }
+
+    function getSelectedChips(groupName) {
+      return Array.from(document.querySelectorAll(`.chip[data-group="${groupName}"][aria-pressed="true"]`))
+        .map((button) => button.dataset.value);
+    }
+
+    function setSelectedChips(groupName, values) {
+      const selected = new Set(values || []);
+      document.querySelectorAll(`.chip[data-group="${groupName}"]`).forEach((button) => {
+        button.setAttribute("aria-pressed", String(selected.has(button.dataset.value)));
+      });
+    }
+
+    function resetForm() {
+      editingId = null;
+      dateInput.value = todayString();
+      timeInput.value = currentTimeString();
+      medicineInput.value = "";
+      memoInput.value = "";
+      setSelectedChips("situations", []);
+      setSelectedChips("feelings", []);
+      saveButton.textContent = "記録する";
+      cancelEditButton.hidden = true;
+    }
+
+    function showMessage(text) {
+      message.textContent = text;
+      clearTimeout(messageTimer);
+      messageTimer = setTimeout(() => {
+        message.textContent = "";
+      }, 2600);
+    }
+
+    function formatDate(dateText) {
+      const parts = dateText.split("-");
+      if (parts.length !== 3) {
+        return dateText;
+      }
+      return `${parts[0]}/${parts[1]}/${parts[2]}`;
+    }
+
+    function sortRecords(records) {
+      return [...records].sort((a, b) => {
+        const dateCompare = b.date.localeCompare(a.date);
+        if (dateCompare !== 0) {
+          return dateCompare;
+        }
+        const timeCompare = b.time.localeCompare(a.time);
+        if (timeCompare !== 0) {
+          return timeCompare;
+        }
+        return b.createdAt.localeCompare(a.createdAt);
+      });
+    }
+
+    function groupRecordsByDate(records) {
+      return sortRecords(records).reduce((groups, record) => {
+        if (!groups[record.date]) {
+          groups[record.date] = [];
+        }
+        groups[record.date].push(record);
+        return groups;
+      }, {});
+    }
+
+    function dateToLocalMidnight(dateText) {
+      const parts = dateText.split("-").map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        return null;
+      }
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    function daysAgoStart(days) {
+      const base = dateToLocalMidnight(todayString());
+      base.setDate(base.getDate() - (days - 1));
+      return base;
+    }
+
+    function countSince(days) {
+      const start = daysAgoStart(days);
+      return appData.records.filter((record) => {
+        const recordDate = dateToLocalMidnight(record.date);
+        return recordDate && recordDate >= start;
+      }).length;
+    }
+
+    function updateCounts() {
+      const today = todayString();
+      todayCount.textContent = `${appData.records.filter((record) => record.date === today).length}回`;
+      sevenCount.textContent = `${countSince(7)}回`;
+      thirtyCount.textContent = `${countSince(30)}回`;
+    }
+
+    function recordSummary(record) {
+      const merged = [...record.situations, ...record.feelings];
+      return merged.length ? merged.join("／") : "記録のみ";
+    }
+
+    function renderRecords() {
+      recordsContainer.innerHTML = "";
+      const records = sortRecords(appData.records);
+      if (records.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "まだ記録はありません。必要になった時のことを、少しずつ残せます。";
+        recordsContainer.appendChild(empty);
+        return;
+      }
+
+      const grouped = groupRecordsByDate(records);
+      Object.keys(grouped).sort((a, b) => b.localeCompare(a)).forEach((date) => {
+        const card = document.createElement("article");
+        card.className = "card record-day";
+
+        const head = document.createElement("div");
+        head.className = "day-head";
+        head.innerHTML = `
+          <div class="day-date">${formatDate(date)}</div>
+          <div class="day-count">頓服 ${grouped[date].length}回</div>
+        `;
+        card.appendChild(head);
+
+        const list = document.createElement("div");
+        list.className = "record-list";
+
+        grouped[date].forEach((record) => {
+          const item = document.createElement("div");
+          item.className = "record-item";
+
+          const main = document.createElement("div");
+          main.className = "record-main";
+
+          const time = document.createElement("div");
+          time.className = "record-time";
+          time.textContent = record.time;
+
+          const detail = document.createElement("div");
+          detail.className = "record-detail";
+
+          const summary = document.createElement("div");
+          summary.className = "record-summary";
+          summary.textContent = recordSummary(record);
+          detail.appendChild(summary);
+
+          if (record.medicine.trim()) {
+            const medicine = document.createElement("div");
+            medicine.className = "record-med";
+            medicine.textContent = record.medicine.trim();
+            detail.appendChild(medicine);
+          }
+
+          if (record.memo.trim()) {
+            const note = document.createElement("div");
+            note.className = "record-note";
+            note.textContent = record.memo.trim();
+            detail.appendChild(note);
+          }
+
+          main.appendChild(time);
+          main.appendChild(detail);
+          item.appendChild(main);
+
+          const actions = document.createElement("div");
+          actions.className = "record-actions";
+
+          const editButton = document.createElement("button");
+          editButton.type = "button";
+          editButton.className = "small-button";
+          editButton.textContent = "編集";
+          editButton.addEventListener("click", () => startEdit(record.id));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.className = "small-button";
+          deleteButton.textContent = "削除";
+          deleteButton.addEventListener("click", () => deleteRecord(record.id));
+
+          actions.appendChild(editButton);
+          actions.appendChild(deleteButton);
+          item.appendChild(actions);
+          list.appendChild(item);
+        });
+
+        card.appendChild(list);
+        recordsContainer.appendChild(card);
+      });
+    }
+
+    function render() {
+      updateCounts();
+      renderRecords();
+    }
+
+    function startEdit(id) {
+      const record = appData.records.find((item) => item.id === id);
+      if (!record) {
+        return;
+      }
+      editingId = id;
+      dateInput.value = record.date;
+      timeInput.value = record.time;
+      medicineInput.value = record.medicine;
+      memoInput.value = record.memo;
+      setSelectedChips("situations", record.situations);
+      setSelectedChips("feelings", record.feelings);
+      saveButton.textContent = "更新する";
+      cancelEditButton.hidden = false;
+      message.textContent = "";
+      document.getElementById("form-title").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function deleteRecord(id) {
+      if (!confirm("この記録を削除しますか？")) {
+        return;
+      }
+      appData.records = appData.records.filter((record) => record.id !== id);
+      if (editingId === id) {
+        resetForm();
+      }
+      saveData();
+      render();
+    }
+
+    recordForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const date = dateInput.value;
+      const time = timeInput.value;
+      if (!date || !time) {
+        showMessage("日付と時間を入力してください");
+        return;
+      }
+
+      const nowIso = new Date().toISOString();
+      const record = {
+        id: editingId || createId(),
+        date,
+        time,
+        medicine: medicineInput.value.trim(),
+        situations: getSelectedChips("situations"),
+        feelings: getSelectedChips("feelings"),
+        memo: memoInput.value.trim(),
+        createdAt: nowIso,
+        updatedAt: editingId ? nowIso : ""
+      };
+
+      if (editingId) {
+        appData.records = appData.records.map((item) => {
+          if (item.id !== editingId) {
+            return item;
+          }
+          return { ...record, createdAt: item.createdAt || nowIso };
+        });
+      } else {
+        appData.records.push(record);
+      }
+
+      saveData();
+      resetForm();
+      render();
+      showMessage("記録しました");
+    });
+
+    cancelEditButton.addEventListener("click", () => {
+      resetForm();
+      message.textContent = "";
+    });
+
+    exportButton.addEventListener("click", () => {
+      const backup = {
+        app: "頓服カウントメモ",
+        storageKey: STORAGE_KEY,
+        exportedAt: new Date().toISOString(),
+        data: normalizeData(appData)
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `prn-dose-count-memo-${todayString()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    importInput.addEventListener("change", async (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) {
+        return;
+      }
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        const imported = parsed && parsed.data ? parsed.data : parsed;
+        const normalized = normalizeData(imported);
+        if (!confirm("現在の記録をバックアップ内容で上書きしますか？")) {
+          importInput.value = "";
+          return;
+        }
+        appData = normalized;
+        saveData();
+        resetForm();
+        render();
+        showMessage("記録しました");
+      } catch (error) {
+        console.warn("バックアップを読み込めませんでした", error);
+        showMessage("バックアップを読み込めませんでした");
+      } finally {
+        importInput.value = "";
+      }
+    });
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch((error) => {
+          console.warn("Service Worker registration failed", error);
+        });
+      });
+    }
+
+    renderChipControls();
+    resetForm();
+    render();
+  </script>
+</body>
+</html>
