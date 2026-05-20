@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f5a89a">
+  <meta name="theme-color" content="#D8B3AA">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="頓服メモ">
@@ -12,19 +12,19 @@
   <title>頓服カウントメモ</title>
   <style>
     :root {
-      --bg: #fff7f2;
+      --bg: #FFF8F3;
       --surface: #ffffff;
-      --surface-soft: #fff0e9;
-      --text: #342b28;
-      --muted: #756762;
-      --line: #ead9d2;
-      --primary: #d96755;
-      --primary-dark: #b94b3b;
-      --primary-soft: #ffe0d7;
-      --accent: #4b938c;
-      --accent-soft: #ddf2ee;
-      --danger: #b94b55;
-      --shadow: 0 14px 36px rgba(99, 61, 47, 0.1);
+      --surface-soft: #FFF4EC;
+      --text: #332B2B;
+      --muted: #7A6A66;
+      --line: #EAD8D1;
+      --primary: #CFA79D;
+      --primary-dark: #9B6F66;
+      --primary-soft: #F6E4DC;
+      --accent: #6D9B8F;
+      --accent-soft: #F6E4DC;
+      --danger: #8F6A64;
+      --shadow: 0 14px 34px rgba(92, 67, 58, 0.08);
       --radius: 20px;
     }
 
@@ -100,7 +100,7 @@
       padding: 18px;
       border: 1px solid rgba(234, 217, 210, 0.9);
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.96);
       box-shadow: var(--shadow);
     }
 
@@ -169,9 +169,9 @@
     }
 
     select {
-      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-      background-position: calc(100% - 18px) 22px, calc(100% - 12px) 22px;
-      background-size: 6px 6px, 6px 6px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%237A6A66' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+      background-position: calc(100% - 16px) center;
+      background-size: 12px 8px;
       background-repeat: no-repeat;
       padding-right: 38px;
     }
@@ -191,7 +191,7 @@
     textarea:focus {
       border-color: var(--primary);
       background: #ffffff;
-      box-shadow: 0 0 0 4px rgba(217, 103, 85, 0.16);
+      box-shadow: 0 0 0 4px rgba(207, 167, 157, 0.18);
     }
 
     .two-col {
@@ -222,9 +222,9 @@
     }
 
     .chip[aria-pressed="true"] {
-      border-color: rgba(75, 147, 140, 0.35);
+      border-color: #DFC7BF;
       background: var(--accent-soft);
-      color: #265f59;
+      color: #5A3F3A;
       font-weight: 700;
     }
 
@@ -248,7 +248,7 @@
       color: #ffffff;
       font-weight: 800;
       line-height: 1.2;
-      box-shadow: 0 10px 22px rgba(217, 103, 85, 0.22);
+      box-shadow: 0 10px 22px rgba(159, 118, 108, 0.16);
     }
 
     .button:active {
@@ -263,10 +263,10 @@
     }
 
     .button.danger {
-      background: #fff6f5;
+      background: #FFF8F3;
       color: var(--danger);
       box-shadow: none;
-      border: 1px solid #f1cfd2;
+      border: 1px solid #EAD8D1;
     }
 
     .message {
@@ -277,7 +277,7 @@
     }
 
     .backup-card {
-      background: #fbfffd;
+      background: #FFFDFB;
     }
 
     .backup-card p {
