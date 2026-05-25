@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
@@ -517,12 +517,12 @@
     </section>
 
     <section class="card backup-card" aria-labelledby="backup-title">
-      <h2 id="backup-title">バックアップ</h2>
-      <p>大切な記録がなくならないように、定期的なバックアップをお願いします。</p>
+      <h2 id="backup-title">記録の保存・復元</h2>
+      <p>記録を保存したり復元できます。</p>
       <div class="actions">
-        <button class="button secondary" id="exportButton" type="button">バックアップを書き出す</button>
+        <button class="button secondary" id="exportButton" type="button">保存</button>
         <label class="button secondary file-label">
-          バックアップを読み込む
+          復元
           <input id="importInput" type="file" accept="application/json,.json">
         </label>
       </div>
@@ -941,7 +941,7 @@
         const parsed = JSON.parse(text);
         const imported = parsed && parsed.data ? parsed.data : parsed;
         const normalized = normalizeData(imported);
-        if (!confirm("現在の記録をバックアップ内容で上書きしますか？")) {
+        if (!confirm("現在の記録を保存した内容で復元しますか？")) {
           importInput.value = "";
           return;
         }
@@ -949,10 +949,10 @@
         saveData();
         resetForm();
         render();
-        showMessage("記録しました");
+        showMessage("復元しました");
       } catch (error) {
-        console.warn("バックアップを読み込めませんでした", error);
-        showMessage("バックアップを読み込めませんでした");
+        console.warn("復元できませんでした", error);
+        showMessage("復元できませんでした");
       } finally {
         importInput.value = "";
       }
