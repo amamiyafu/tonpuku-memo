@@ -73,6 +73,12 @@
       padding: 8px 2px 18px;
     }
 
+    .title-block {
+      width: 100%;
+      max-width: 100%;
+      text-align: center;
+    }
+
     h1,
     h2,
     h3,
@@ -88,7 +94,8 @@
     }
 
     .lead {
-      margin-bottom: 0;
+      max-width: 420px;
+      margin: 0 auto;
       color: var(--muted);
       font-size: 15px;
     }
@@ -447,10 +454,12 @@
 <body>
   <main class="app" id="app">
     <section class="hero" aria-labelledby="app-title">
-      <h1 id="app-title">頓服メモ</h1>
-      <p class="lead">
-        頓服を飲んだ時間や、そのときの状況・気持ちを記録するメモです。
-      </p>
+      <div class="title-block">
+        <h1 id="app-title">頓服メモ</h1>
+        <p class="lead">
+          頓服を飲んだ時間や、そのときの状況・気持ちを記録するメモです。
+        </p>
+      </div>
     </section>
 
     <section class="card" aria-labelledby="form-title">
