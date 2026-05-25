@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="頓服メモ">
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon.png">
-  <title>頓服カウントメモ</title>
+  <title>頓服メモ</title>
   <style>
     :root {
       --bg: #FFF8F3;
@@ -447,7 +447,7 @@
 <body>
   <main class="app" id="app">
     <section class="hero" aria-labelledby="app-title">
-      <h1 id="app-title">頓服カウントメモ</h1>
+      <h1 id="app-title">頓服メモ</h1>
       <p class="lead">
         頓服を飲んだ時間や、そのときの状況・気持ちを記録するメモです。
       </p>
@@ -915,7 +915,7 @@
 
     exportButton.addEventListener("click", () => {
       const backup = {
-        app: "頓服カウントメモ",
+        app: "頓服メモ",
         storageKey: STORAGE_KEY,
         exportedAt: new Date().toISOString(),
         data: normalizeData(appData)
