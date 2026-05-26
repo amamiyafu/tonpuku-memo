@@ -538,7 +538,8 @@
       </form>
     </section>
 
-    <section class="card backup-card" aria-label="記録の保存と復元">
+    <section class="card backup-card" aria-labelledby="backup-title">
+      <h2 id="backup-title">バックアップ</h2>
       <p>記録を保存したり復元できます。<br>大切な記録がなくならないように、定期的に保存をお願いします。</p>
       <div class="backup-actions">
         <button class="button secondary" id="exportButton" type="button">保存</button>
@@ -980,8 +981,19 @@
     });
 
     if ("serviceWorker" in navigator) {
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) {
+          return;
+        }
+        refreshing = true;
+        window.location.reload();
+      });
+
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch((error) => {
+        navigator.serviceWorker.register("./sw.js").then((registration) => {
+          registration.update();
+        }).catch((error) => {
           console.warn("Service Worker registration failed", error);
         });
       });
