@@ -288,9 +288,22 @@
     }
 
     .backup-card p {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       color: var(--muted);
       font-size: 14px;
+    }
+
+    .backup-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .backup-actions .button {
+      width: 100%;
+      min-width: 0;
     }
 
     .file-label {
@@ -525,10 +538,9 @@
       </form>
     </section>
 
-    <section class="card backup-card" aria-labelledby="backup-title">
-      <h2 id="backup-title">記録の保存・復元</h2>
+    <section class="card backup-card" aria-label="記録の保存と復元">
       <p>記録を保存したり復元できます。<br>大切な記録がなくならないように、定期的に保存をお願いします。</p>
-      <div class="actions">
+      <div class="backup-actions">
         <button class="button secondary" id="exportButton" type="button">保存</button>
         <label class="button secondary file-label">
           復元
