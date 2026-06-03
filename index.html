@@ -401,12 +401,30 @@
       line-height: 1.45;
     }
 
-    .record-dose-med,
-    .record-note {
-      margin-top: 4px;
+    .record-field {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+      margin-top: 8px;
+    }
+
+    .record-field:first-child {
+      margin-top: 0;
+    }
+
+    .record-field-label {
       color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .record-field-value {
+      color: var(--text);
       font-size: 14px;
+      line-height: 1.55;
       overflow-wrap: anywhere;
+      white-space: normal;
     }
 
     .record-actions {
@@ -753,9 +771,26 @@
       }, {});
     }
 
-    function recordSummary(record) {
-      const merged = [...record.situations, ...record.feelings];
-      return merged.length ? merged.join("／") : "記録のみ";
+    function appendRecordField(container, label, value) {
+      const values = Array.isArray(value) ? value.filter(Boolean).join("、") : String(value || "").trim();
+      if (!values) {
+        return;
+      }
+
+      const field = document.createElement("div");
+      field.className = "record-field";
+
+      const fieldLabel = document.createElement("div");
+      fieldLabel.className = "record-field-label";
+      fieldLabel.textContent = label;
+
+      const fieldValue = document.createElement("div");
+      fieldValue.className = "record-field-value";
+      fieldValue.textContent = values;
+
+      field.appendChild(fieldLabel);
+      field.appendChild(fieldValue);
+      container.appendChild(field);
     }
 
     function renderRecords() {
@@ -799,10 +834,18 @@
           const detail = document.createElement("div");
           detail.className = "record-detail";
 
-          const summary = document.createElement("div");
-          summary.className = "record-summary";
-          summary.textContent = recordSummary(record);
-          detail.appendChild(summary);
+          const hasSituations = record.situations.length > 0;
+          const hasFeelings = record.feelings.length > 0;
+
+          if (!hasSituations && !hasFeelings) {
+            const summary = document.createElement("div");
+            summary.className = "record-summary";
+            summary.textContent = "記録のみ";
+            detail.appendChild(summary);
+          } else {
+            appendRecordField(detail, "どんなとき：", record.situations);
+            appendRecordField(detail, "気持ち：", record.feelings);
+          }
 
           const doseMedParts = [];
           if (record.dosageCount.trim()) {
@@ -811,19 +854,8 @@
           if (record.medicine.trim()) {
             doseMedParts.push(record.medicine.trim());
           }
-          if (doseMedParts.length) {
-            const doseMed = document.createElement("div");
-            doseMed.className = "record-dose-med";
-            doseMed.textContent = doseMedParts.join("　");
-            detail.appendChild(doseMed);
-          }
-
-          if (record.memo.trim()) {
-            const note = document.createElement("div");
-            note.className = "record-note";
-            note.textContent = record.memo.trim();
-            detail.appendChild(note);
-          }
+          appendRecordField(detail, "薬：", doseMedParts.join("　"));
+          appendRecordField(detail, "メモ：", record.memo.trim());
 
           main.appendChild(time);
           main.appendChild(detail);
