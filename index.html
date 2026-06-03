@@ -188,6 +188,10 @@
       padding: 12px 14px;
     }
 
+    .conditional-field {
+      margin-top: 10px;
+    }
+
     textarea {
       min-height: 112px;
       padding: 12px 14px;
@@ -536,11 +540,19 @@
         <div class="field">
           <span class="fieldset-label">どんなとき？</span>
           <div class="chip-group" id="situationChips" aria-label="どんなとき"></div>
+          <div class="conditional-field" id="otherSituationField" hidden>
+            <label for="otherSituationInput">その他（任意）</label>
+            <input id="otherSituationInput" name="otherSituation" type="text" placeholder="例：病院の帰り、SNSを見た後、電話の後など" autocomplete="off">
+          </div>
         </div>
 
         <div class="field">
           <span class="fieldset-label">そのときの気持ち</span>
           <div class="chip-group" id="feelingChips" aria-label="そのときの気持ち"></div>
+          <div class="conditional-field" id="otherFeelingField" hidden>
+            <label for="otherFeelingInput">その他の気持ち（任意）</label>
+            <input id="otherFeelingInput" name="otherFeeling" type="text" placeholder="例：焦り、むなしさ、緊張、ぼーっとするなど" autocomplete="off">
+          </div>
         </div>
 
         <div class="field">
@@ -593,6 +605,7 @@
       "苦しい",
       "イライラ",
       "悲しい",
+      "疲れた",
       "落ち着かない",
       "頭が止まらない",
       "消えたい",
@@ -603,6 +616,10 @@
     const timeInput = document.getElementById("timeInput");
     const dosageCountSelect = document.getElementById("dosageCountSelect");
     const medicineInput = document.getElementById("medicineInput");
+    const otherSituationField = document.getElementById("otherSituationField");
+    const otherSituationInput = document.getElementById("otherSituationInput");
+    const otherFeelingField = document.getElementById("otherFeelingField");
+    const otherFeelingInput = document.getElementById("otherFeelingInput");
     const memoInput = document.getElementById("memoInput");
     const recordForm = document.getElementById("recordForm");
     const saveButton = document.getElementById("saveButton");
@@ -645,7 +662,9 @@
         dosageCount: typeof record.dosageCount === "string" ? record.dosageCount : "",
         medicine: typeof record.medicine === "string" ? record.medicine : "",
         situations: Array.isArray(record.situations) ? record.situations.filter(Boolean) : [],
+        otherSituation: typeof record.otherSituation === "string" ? record.otherSituation : "",
         feelings: Array.isArray(record.feelings) ? record.feelings.filter(Boolean) : [],
+        otherFeeling: typeof record.otherFeeling === "string" ? record.otherFeeling : "",
         memo: typeof record.memo === "string" ? record.memo : "",
         createdAt: typeof record.createdAt === "string" ? record.createdAt : new Date().toISOString(),
         updatedAt: typeof record.updatedAt === "string" ? record.updatedAt : ""
@@ -693,6 +712,7 @@
       button.addEventListener("click", () => {
         const isPressed = button.getAttribute("aria-pressed") === "true";
         button.setAttribute("aria-pressed", String(!isPressed));
+        updateOtherFields();
       });
       return button;
     }
@@ -716,6 +736,34 @@
       document.querySelectorAll(`.chip[data-group="${groupName}"]`).forEach((button) => {
         button.setAttribute("aria-pressed", String(selected.has(button.dataset.value)));
       });
+      updateOtherFields();
+    }
+
+    function isOtherSelected(groupName) {
+      const otherButton = document.querySelector(`.chip[data-group="${groupName}"][data-value="その他"]`);
+      return otherButton ? otherButton.getAttribute("aria-pressed") === "true" : false;
+    }
+
+    function updateOtherField(field, input, isVisible) {
+      field.hidden = !isVisible;
+      if (!isVisible) {
+        input.value = "";
+      }
+    }
+
+    function updateOtherFields() {
+      updateOtherField(otherSituationField, otherSituationInput, isOtherSelected("situations"));
+      updateOtherField(otherFeelingField, otherFeelingInput, isOtherSelected("feelings"));
+    }
+
+    function displayValuesWithOther(values, otherValue) {
+      const trimmedOther = String(otherValue || "").trim();
+      return (values || []).map((value) => {
+        if (value === "その他" && trimmedOther) {
+          return trimmedOther;
+        }
+        return value;
+      });
     }
 
     function resetForm() {
@@ -724,9 +772,12 @@
       timeInput.value = currentTimeString();
       dosageCountSelect.value = "";
       medicineInput.value = "";
+      otherSituationInput.value = "";
+      otherFeelingInput.value = "";
       memoInput.value = "";
       setSelectedChips("situations", []);
       setSelectedChips("feelings", []);
+      updateOtherFields();
       saveButton.textContent = "記録する";
       cancelEditButton.hidden = true;
     }
@@ -834,8 +885,10 @@
           const detail = document.createElement("div");
           detail.className = "record-detail";
 
-          const hasSituations = record.situations.length > 0;
-          const hasFeelings = record.feelings.length > 0;
+          const situationValues = displayValuesWithOther(record.situations, record.otherSituation);
+          const feelingValues = displayValuesWithOther(record.feelings, record.otherFeeling);
+          const hasSituations = situationValues.length > 0;
+          const hasFeelings = feelingValues.length > 0;
 
           if (!hasSituations && !hasFeelings) {
             const summary = document.createElement("div");
@@ -843,8 +896,8 @@
             summary.textContent = "記録のみ";
             detail.appendChild(summary);
           } else {
-            appendRecordField(detail, "どんなとき：", record.situations);
-            appendRecordField(detail, "気持ち：", record.feelings);
+            appendRecordField(detail, "どんなとき：", situationValues);
+            appendRecordField(detail, "気持ち：", feelingValues);
           }
 
           const doseMedParts = [];
@@ -904,6 +957,9 @@
       memoInput.value = record.memo;
       setSelectedChips("situations", record.situations);
       setSelectedChips("feelings", record.feelings);
+      updateOtherFields();
+      otherSituationInput.value = record.otherSituation || "";
+      otherFeelingInput.value = record.otherFeeling || "";
       saveButton.textContent = "更新する";
       cancelEditButton.hidden = false;
       message.textContent = "";
@@ -939,7 +995,9 @@
         dosageCount: dosageCountSelect.value,
         medicine: medicineInput.value.trim(),
         situations: getSelectedChips("situations"),
+        otherSituation: otherSituationInput.value.trim(),
         feelings: getSelectedChips("feelings"),
+        otherFeeling: otherFeelingInput.value.trim(),
         memo: memoInput.value.trim(),
         createdAt: nowIso,
         updatedAt: editingId ? nowIso : ""

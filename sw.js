@@ -1,4 +1,4 @@
-const CACHE_NAME = "prn-dose-count-memo-v13";
+const CACHE_NAME = "prn-dose-count-memo-v15";
 const CACHE_FILES = [
   "./index.html",
   "./manifest.json",
