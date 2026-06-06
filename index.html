@@ -336,6 +336,41 @@
       line-height: 1.35;
     }
 
+    .month-switcher {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 0 14px;
+    }
+
+    .month-button {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fffdfb;
+      color: var(--primary-dark);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.2;
+      box-shadow: none;
+    }
+
+    .month-label {
+      min-width: 112px;
+      color: var(--text);
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.3;
+      text-align: center;
+      white-space: nowrap;
+    }
+
     .record-day {
       padding: 0;
       overflow: hidden;
@@ -476,6 +511,21 @@
         width: 100%;
       }
 
+      .month-switcher {
+        gap: 6px;
+      }
+
+      .month-button {
+        min-height: 42px;
+        padding: 9px 8px;
+        font-size: 13px;
+      }
+
+      .month-label {
+        min-width: 96px;
+        font-size: 16px;
+      }
+
       .record-main {
         grid-template-columns: 52px minmax(0, 1fr);
       }
@@ -583,6 +633,11 @@
     <div class="section-title">
       <h2>記録一覧</h2>
     </div>
+    <div class="month-switcher" aria-label="表示する月を切り替える">
+      <button class="month-button" id="prevMonthButton" type="button">前の月</button>
+      <div class="month-label" id="currentMonthLabel" aria-live="polite"></div>
+      <button class="month-button" id="nextMonthButton" type="button">次の月</button>
+    </div>
     <section id="recordsContainer" aria-live="polite"></section>
   </main>
 
@@ -626,10 +681,14 @@
     const cancelEditButton = document.getElementById("cancelEditButton");
     const message = document.getElementById("message");
     const recordsContainer = document.getElementById("recordsContainer");
+    const prevMonthButton = document.getElementById("prevMonthButton");
+    const nextMonthButton = document.getElementById("nextMonthButton");
+    const currentMonthLabel = document.getElementById("currentMonthLabel");
     const exportButton = document.getElementById("exportButton");
     const importInput = document.getElementById("importInput");
 
     let appData = loadData();
+    let selectedMonth = currentMonthString();
     let editingId = null;
     let messageTimer = null;
 
@@ -640,6 +699,29 @@
     function todayString() {
       const now = new Date();
       return `${now.getFullYear()}-${padNumber(now.getMonth() + 1)}-${padNumber(now.getDate())}`;
+    }
+
+    function currentMonthString() {
+      return todayString().slice(0, 7);
+    }
+
+    function formatMonthLabel(monthText) {
+      const parts = monthText.split("-");
+      if (parts.length !== 2) {
+        return monthText;
+      }
+      return `${Number(parts[0])}年${Number(parts[1])}月`;
+    }
+
+    function shiftMonth(monthText, offset) {
+      const parts = monthText.split("-");
+      const year = Number(parts[0]);
+      const month = Number(parts[1]);
+      if (!year || !month) {
+        return currentMonthString();
+      }
+      const shifted = new Date(year, month - 1 + offset, 1);
+      return `${shifted.getFullYear()}-${padNumber(shifted.getMonth() + 1)}`;
     }
 
     function currentTimeString() {
@@ -844,13 +926,22 @@
       container.appendChild(field);
     }
 
+    function renderMonthSwitcher() {
+      currentMonthLabel.textContent = formatMonthLabel(selectedMonth);
+    }
+
+    function recordsForSelectedMonth() {
+      return appData.records.filter((record) => typeof record.date === "string" && record.date.startsWith(`${selectedMonth}-`));
+    }
+
     function renderRecords() {
       recordsContainer.innerHTML = "";
-      const records = sortRecords(appData.records);
+      renderMonthSwitcher();
+      const records = sortRecords(recordsForSelectedMonth());
       if (records.length === 0) {
         const empty = document.createElement("p");
         empty.className = "empty";
-        empty.textContent = "まだ記録はありません。";
+        empty.textContent = "この月の記録はありません。";
         recordsContainer.appendChild(empty);
         return;
       }
@@ -988,6 +1079,7 @@
       }
 
       const nowIso = new Date().toISOString();
+      selectedMonth = date.slice(0, 7);
       const record = {
         id: editingId || createId(),
         date,
@@ -1023,6 +1115,16 @@
     cancelEditButton.addEventListener("click", () => {
       resetForm();
       message.textContent = "";
+    });
+
+    prevMonthButton.addEventListener("click", () => {
+      selectedMonth = shiftMonth(selectedMonth, -1);
+      render();
+    });
+
+    nextMonthButton.addEventListener("click", () => {
+      selectedMonth = shiftMonth(selectedMonth, 1);
+      render();
     });
 
     exportButton.addEventListener("click", () => {
